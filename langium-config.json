@@ -1,0 +1,17 @@
+{
+  "projectName": "Pseudanim",
+  "languages": [
+    {
+      "id": "pseudanim",
+      "grammar": "src/grammar/pseudanim.langium",
+      "fileExtensions": [".pa"],
+      "textMate": {
+        "out": "src/generated/syntaxes/pseudanim.tmLanguage.json"
+      },
+      "monarch": {
+        "out": "src/generated/syntaxes/pseudanim.monarch.ts"
+      }
+    }
+  ],
+  "out": "src/generated"
+}
