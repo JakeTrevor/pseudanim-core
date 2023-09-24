@@ -1,12 +1,20 @@
-import { NodeFileSystem } from "langium/node";
 import { Command } from "commander";
-import { Module, Statement } from "../generated/ast.js";
+import { NodeFileSystem } from "langium/node";
+import type {
+  Access,
+  Expression,
+  Module,
+  Operation,
+} from "../generated/ast.js";
+import { isExpression } from "../generated/ast.js";
 
-import { StateFrame } from "../types/IR.js";
-import { extractAstNode } from "./cli-util.js";
 import { createPseudanimServices } from "../shared/module.js";
+import { extractAstNode } from "./cli-util.js";
+import visitor from "../shared/visitor.js";
 
 const program = new Command();
+
+const vis = new visitor();
 
 program
   .argument("<file>", "source file to run")
@@ -15,7 +23,11 @@ program
 
     const module = await extractAstNode<Module>(file, services);
 
-    module.statements.forEach((e) => console.log(e.$type));
+    const expressions = module.statements.filter((e) =>
+      isExpression(e)
+    ) as Expression[];
+
+    expressions.forEach((e) => console.log(vis.Expression(e)));
   })
   .parse();
 

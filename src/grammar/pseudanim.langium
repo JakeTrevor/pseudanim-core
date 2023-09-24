@@ -25,25 +25,27 @@ For:
 ;
 
 Assignment:
-    var=Variable path=Access? '=' val=(Expression)
+    var=Variable path=Access '=' val=(Expression)
 ;
 
 Variable:
     name=ID
 ;
 
+
 Expression:
     left=SimpleExpression right=Operation?
 ;
 
 Operation:
-    operand=("<"|">"|"<="|">="|"!=="|"=="|"+"|"-"|"*"|"/"|"^"|"%"|"["|"and"|"or") right=Expression
-    | access=Access left=Operation?
+    operand=("<"|">"|"<="|">="|"!=="|"=="|"+"|"-"|"*"|"/"|"^"|"%"|"and"|"or") right=Expression
+    | access=Access right=Operation?
 ;
 
 SimpleExpression:
-    (value=BOOLEAN | STRING | INT | ArrayLiteral |('(' Expression ')')) 
-    | ref=ID
+    (value=(STRING | NUMBER | BooleanLiteral | ArrayLiteral))
+    | ('(' value=Expression ')')
+    | (ref=ID)
 ;
 
 ArrayLiteral:
@@ -67,11 +69,14 @@ PropertyAccess:
     ('.' path+=ID)+
 ;
 
+
+BooleanLiteral:
+    value?='true' | 'false';
+
 hidden terminal WS: /\s+/;
 
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
-terminal BOOLEAN: /(true)|(false)/;
-terminal INT returns number: /[0-9]+/;
+terminal STRING returns string: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+terminal NUMBER returns number: /(?:(?:-?[0-9]+)?\.[0-9]+)|-?[0-9]+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

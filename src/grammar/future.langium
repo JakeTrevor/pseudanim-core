@@ -2,6 +2,10 @@
 
 
 // fucntion stuff:
-FunctionDefinition:
-    'fn' var=Variable '(' (params+=Variable (',' params+=Variable)*)? ')' code=Block
-;
+    
+// FunctionDefinition:
+//     'fn' var=Variable '(' (params+=Variable (',' params+=Variable)*)? ')' code=Block
+// ;
+
+terminal HI: /hi/;
+
