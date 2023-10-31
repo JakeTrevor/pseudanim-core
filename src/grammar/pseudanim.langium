@@ -21,32 +21,65 @@ While:
 ;
 
 For:
-    'for' var=Variable 'in' arr=Expression code=Block
+    'for' var=ID 'in' arr=Expression code=Block
 ;
 
 Assignment:
-    var=Variable path=Access '=' val=(Expression)
+    var=ID (path=Access)? '=' val=(Expression)
 ;
 
-Variable:
-    name=ID
-;
 
+// operator precedence: B I DM AS mod cmp eq lgc
 
 Expression:
-    left=SimpleExpression right=Operation?
-;
-
-Operation:
-    operand=("<"|">"|"<="|">="|"!=="|"=="|"+"|"-"|"*"|"/"|"^"|"%"|"and"|"or") right=Expression
-    | access=Access right=Operation?
-;
+    Lgc;
 
 SimpleExpression:
-    (value=(STRING | NUMBER | BooleanLiteral | ArrayLiteral))
-    | ('(' value=Expression ')')
-    | (ref=ID)
+    Literal
+    | SubExpression
+    | Reference
 ;
+
+Literal:
+    value=(STRING | NUMBER | BooleanLiteral | ArrayLiteral)
+;
+
+SubExpression:
+    '(' value=Expression ')'
+;
+
+Reference:
+    ref=ID (access=Access)?
+;
+
+Pow infers Expression:
+    SimpleExpression ({infer BinaryExpression.left=current} op="^" right=SimpleExpression)*
+;
+
+Mul infers Expression:
+    Pow ({infer BinaryExpression.left=current} op=("*"|"/") right=Pow)*
+;
+
+Add infers Expression:
+    Mul ({infer BinaryExpression.left=current} op=("+"|"-") right=Mul)*
+;
+
+Mod infers Expression:
+    Add ({infer BinaryExpression.left=current} op="%" right=Add)*
+;
+
+Cmp infers Expression:
+    Mod ({infer BinaryExpression.left=current} op=("<"|">"|"<="|">=") right=Mod)*
+;
+
+Eq infers Expression:
+    Cmp ({infer BinaryExpression.left=current} op=("!="|"==") right=Cmp)*
+;
+
+Lgc infers Expression:
+    Eq ({infer BinaryExpression.left=current} op=("and"|"or") right=Eq)*
+;
+
 
 ArrayLiteral:
     '[' contents+=(RangeExpression | Expression)? (',' contents+=(RangeExpression | Expression))*']'
@@ -57,16 +90,7 @@ RangeExpression:
 ;
 
 Access:
-    Indexing
-    | PropertyAccess
-;
-
-Indexing:
-    ('[' path+=Expression ']')+
-;
-
-PropertyAccess:
-    ('.' path+=ID)+
+    (('[' path+=Expression ']') | (('.' path+=ID)))+
 ;
 
 

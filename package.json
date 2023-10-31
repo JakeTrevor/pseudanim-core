@@ -7,7 +7,7 @@
   "scripts": {
     "generate": "langium generate",
     "build": "node ./build.mjs",
-    "run": "node ./build.mjs && node ./out/cli.js ./samples/expresions.pa"
+    "run": "node ./build.mjs && node ./out/cli.js ./samples/insertion-sort.pa"
   },
   "keywords": [],
   "author": "JakeTrevor <Jacob.Trevor234@gmail.com>",
