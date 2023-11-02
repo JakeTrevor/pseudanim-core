@@ -3,8 +3,9 @@ import { NodeFileSystem } from "langium/node";
 import type { Module } from "../generated/ast.js";
 
 import { createPseudanimServices } from "../shared/module.js";
-import visitor from "../shared/visitor.js";
+import visitor from "../shared/evaluatorVisitor.js";
 import { extractAstNode } from "./cli-util.js";
+import { moduleGenerator } from "../shared/visitor.js";
 
 const program = new Command();
 
@@ -17,16 +18,9 @@ program
 
     const module = await extractAstNode<Module>(file, services);
 
-    module.statements
-      .flatMap((e) => vis.Statement(e))
-      .forEach((e) => console.log(e));
+    const generator = moduleGenerator(module);
+
+    const frames = [...generator];
+    console.log(JSON.stringify(frames));
   })
   .parse();
-
-// function runLine(Statement: Statement, prevState: StateFrame): StateFrame {
-//   return [];
-// }
-
-// export function generateJavaScript({ statements }: Module) {
-//   statements.forEach((e, i) => console.log(`${i + 1}: ${e}`));
-// }
