@@ -115,16 +115,6 @@ const operators: Record<
   "==": (a, b, context) => expression(a, context) === expression(b, context),
   ">": (a, b, context) => expression(a, context) > expression(b, context),
   ">=": (a, b, context) => expression(a, context) >= expression(b, context),
-  and: (a, b, context) => {
-    let x = expression(a, context) as boolean;
-    if (!x) return x;
-
-    return x && (expression(b, context) as boolean);
-  },
-  or: (a, b, context) => {
-    let x = expression(a, context) as boolean;
-    if (x) return x;
-
-    return x || (expression(b, context) as boolean);
-  },
+  and: (a, b, context) => expression(a, context) && expression(b, context),
+  or: (a, b, context) => expression(a, context) || expression(b, context),
 };
