@@ -3,15 +3,16 @@
   "languages": [
     {
       "id": "pseudanim",
-      "grammar": "src/grammar/pseudanim.langium",
+      "grammar": "src/language/pseudanim.langium",
       "fileExtensions": [".pa"],
       "textMate": {
-        "out": "src/generated/syntaxes/pseudanim.tmLanguage.json"
+        "out": "src/language/generated/syntaxes/pseudanim.tmLanguage.json"
       },
       "monarch": {
-        "out": "src/generated/syntaxes/pseudanim.monarch.ts"
+        "out": "src/language/generated/syntaxes/pseudanim.monarch.ts"
       }
     }
   ],
-  "out": "src/generated"
+  "importExtension": "",
+  "out": "src/language/generated"
 }
