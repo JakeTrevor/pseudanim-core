@@ -1,19 +1,19 @@
 import {
-  Assignment,
-  For,
-  If,
-  Module,
-  Statement,
-  While,
+  type Assignment,
+  type For,
+  type If,
+  type Module,
+  type Statement,
+  type While,
   isAssignment,
   isExpression,
   isFor,
   isIf,
   isWhile,
-} from "../generated/ast.js";
-import { StateFrame } from "../types/IR.js";
-import { Context, ContextPath } from "./context.js";
-import { expression } from "./evaluator.js";
+} from "~/language/generated/ast";
+import { type StateFrame } from "~/types/IR";
+import { Context, type ContextPath } from "./context";
+import { expression } from "./evaluator";
 
 type FrameGenerator = Generator<StateFrame, void, void>;
 
@@ -28,8 +28,8 @@ function* AssignmentGenerator(a: Assignment, context: Context): FrameGenerator {
     a.path?.path.map((e) => {
       if (isExpression(e)) return expression(e, context);
       return e;
-    }) || [];
-  path.unshift(a.var);
+    }) ?? [];
+  path.unshift(a.name);
 
   const value = expression(a.val, context);
   context.set(path as ContextPath, value);
@@ -44,7 +44,7 @@ function* ForGenerator(f: For, parentContext: Context): FrameGenerator {
     context.set([f.var], elem);
     yield context.makeFrame();
 
-    yield* BlockGenerator(f.code.statements, context);
+    yield* BlockGenerator(f.statements, context);
   }
 }
 
@@ -52,7 +52,7 @@ function* IfGenerator(ifStatement: If, parentContext: Context): FrameGenerator {
   const context = new Context(parentContext);
   const cond = expression(ifStatement.condition, context) as boolean;
   if (cond) {
-    yield* BlockGenerator(ifStatement.code.statements, context);
+    yield* BlockGenerator(ifStatement.statements, context);
   }
 }
 
@@ -65,7 +65,7 @@ function* WhileGenerator(
   let cond = expression(whileStatement.condition, context);
 
   while (cond) {
-    yield* BlockGenerator(whileStatement.code.statements, context);
+    yield* BlockGenerator(whileStatement.statements, context);
     cond = expression(whileStatement.condition, context);
   }
 }

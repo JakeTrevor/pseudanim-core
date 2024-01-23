@@ -1,21 +1,21 @@
 import {
-  isReference,
-  ArrayLiteral,
-  BinaryExpression,
-  BooleanLiteral,
-  Expression,
-  Literal,
-  RangeExpression,
-  SimpleExpression,
+  isRef,
+  type ArrayLiteral,
+  type BinaryExpression,
+  type BooleanLiteral,
+  type Expression,
+  type Literal,
+  type RangeExpression,
+  type SimpleExpression,
   isArrayLiteral,
   isBooleanLiteral,
   isLiteral,
   isRangeExpression,
   isSimpleExpression,
-  Reference,
+  type Ref,
   isExpression,
-} from "../generated/ast.js";
-import { Context, ContextPath, Value } from "./context.js";
+} from "~/language/generated/ast";
+import { type Context, type ContextPath, type Value } from "./context";
 
 export const expression = (expr: Expression, context: Context): Value => {
   if (isSimpleExpression(expr)) return simpleExpression(expr, context);
@@ -24,17 +24,22 @@ export const expression = (expr: Expression, context: Context): Value => {
 
 const simpleExpression = (expr: SimpleExpression, context: Context): Value => {
   if (isLiteral(expr)) return literal(expr, context);
-  if (isReference(expr)) return reference(expr, context);
+  if (isRef(expr)) return reference(expr, context);
   return expression(expr.value, context);
 };
 
-const reference = (ref: Reference, context: Context): Value => {
+const reference = (ref: Ref, context: Context): Value => {
+  if (ref.ref.error)
+    throw Error("unresolvable reference: ", { cause: ref.ref.error.message });
+
+  if (!ref.ref.ref) throw Error("unamed reference");
+
   const path =
     ref.access?.path.map((e) => {
       if (isExpression(e)) return expression(e, context);
       return e;
-    }) || [];
-  path.unshift(ref.ref);
+    }) ?? [];
+  path.unshift(ref.ref.ref.name);
 
   const v = context.get(path as ContextPath);
 
@@ -59,8 +64,8 @@ const arrayLiteral = ({ contents }: ArrayLiteral, context: Context): Value =>
   }) as Value;
 
 const rangeExpression = (expr: RangeExpression, context: Context) => {
-  let start = expression(expr.start, context);
-  let end = expression(expr.end, context);
+  const start = expression(expr.start, context);
+  const end = expression(expr.end, context);
 
   if (typeof start !== "number") {
     //todo proper runtime error
@@ -71,8 +76,8 @@ const rangeExpression = (expr: RangeExpression, context: Context) => {
     throw Error("invalid number in range");
   }
 
-  let len = end - start;
-  return [...Array(len).keys()].map((e) => e + (start as number));
+  const len = end - start;
+  return [...Array(len).keys()].map((e) => e + start);
 };
 
 const binaryExpression = (expr: BinaryExpression, context: Context): Value => {

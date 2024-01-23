@@ -1,6 +1,6 @@
-import { ValidationAcceptor, ValidationChecks } from "langium";
-import { PseudanimServices } from "./module.js";
-import { PseudanimAstType } from "../generated/ast.js";
+import { type ValidationChecks } from "langium";
+import { type PseudanimAstType } from "./generated/ast";
+import type { PseudanimServices } from "./pseudanim-module";
 
 /**
  * Register custom validation checks.
@@ -8,9 +8,7 @@ import { PseudanimAstType } from "../generated/ast.js";
 export function registerValidationChecks(services: PseudanimServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.PseudanimValidator;
-  const checks: ValidationChecks<PseudanimAstType> = {
-    // Person: validator.checkPersonStartsWithCapital,
-  };
+  const checks: ValidationChecks<PseudanimAstType> = {};
   registry.register(checks, validator);
 }
 

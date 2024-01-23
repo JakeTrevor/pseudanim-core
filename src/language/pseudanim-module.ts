@@ -1,18 +1,18 @@
 import {
   createDefaultModule,
   createDefaultSharedModule,
-  DefaultSharedModuleContext,
   inject,
-  LangiumServices,
-  LangiumSharedServices,
-  Module,
-  PartialLangiumServices,
+  type DefaultSharedModuleContext,
+  type LangiumServices,
+  type LangiumSharedServices,
+  type Module,
+  type PartialLangiumServices,
 } from "langium";
-import { PseudanimValidator, registerValidationChecks } from "./validator.js";
 import {
   PseudanimGeneratedModule,
   PseudanimGeneratedSharedModule,
-} from "../generated/module.js";
+} from "./generated/module";
+import { PseudanimValidator, registerValidationChecks } from "./validator";
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -64,12 +64,12 @@ export function createPseudanimServices(context: DefaultSharedModuleContext): {
 } {
   const shared = inject(
     createDefaultSharedModule(context),
-    PseudanimGeneratedSharedModule
+    PseudanimGeneratedSharedModule,
   );
   const Pseudanim = inject(
     createDefaultModule({ shared }),
     PseudanimGeneratedModule,
-    PseudanimModule
+    PseudanimModule,
   );
   shared.ServiceRegistry.register(Pseudanim);
   registerValidationChecks(Pseudanim);

@@ -1,8 +1,9 @@
-import { StateFrame } from "../types/IR.js";
+import { type StateFrame } from "~/types/IR";
 
 export type Value = string | number | boolean | string[] | number[] | boolean[];
 export type ContextPath = (string | number)[];
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Scope extends Record<string | number, Value | Scope> {}
 
 export class Context {
@@ -15,7 +16,7 @@ export class Context {
   }
 
   get = (path: ContextPath): Value | undefined => {
-    // @ts-ignore
+    // @ts-expect-error - cast is not type safe in general, but for well typed programs its OK
     let result: Value | undefined = path.reduce((acc, val) => {
       if (acc !== undefined) return acc[val] as Scope;
       return acc;
@@ -29,15 +30,15 @@ export class Context {
   };
 
   set = (path: ContextPath, value: Value) => {
-    if (this.parent && this.parent.get(path) !== undefined) {
+    if (this.parent?.get(path) !== undefined) {
       this.parent.set(path, value);
     } else {
       let s = this.scope;
       while (path.length > 1) {
-        const next = path.shift() as string | number;
+        const next = path.shift()!;
         s = s[next] as Scope;
       }
-      const next = path.pop() as string | number;
+      const next = path.pop()!;
       s[next] = value;
     }
   };
@@ -76,7 +77,7 @@ export class Context {
           key: varName,
           value: value,
         };
-      })
+      }),
     );
     return frame;
   };

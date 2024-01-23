@@ -4,7 +4,7 @@ entry Module:
     (statements+=Statement)*
 ;
 
-Block:
+fragment Block:
     '{' (statements+=Statement)* '}'
 ;
 
@@ -13,19 +13,19 @@ Statement:
 ;
 
 If:
-    'if' condition=Expression code=Block
+    'if' condition=Expression Block
 ;
 
 While:
-    'while' condition=Expression code=Block
+    'while' condition=Expression Block
 ;
 
 For:
-    'for' var=ID 'in' arr=Expression code=Block
+    'for' var=ID 'in' arr=Expression Block
 ;
 
 Assignment:
-    var=ID (path=Access)? '=' val=(Expression)
+    name=ID (path=Access)? '=' val=(Expression)
 ;
 
 
@@ -37,7 +37,7 @@ Expression:
 SimpleExpression:
     Literal
     | SubExpression
-    | Reference
+    | Ref
 ;
 
 Literal:
@@ -48,8 +48,8 @@ SubExpression:
     '(' value=Expression ')'
 ;
 
-Reference:
-    ref=ID (access=Access)?
+Ref:
+    (ref=ID) (access=Access)?
 ;
 
 Pow infers Expression:
