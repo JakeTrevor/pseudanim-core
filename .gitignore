@@ -3,6 +3,9 @@
 # generated parser files
 /src/language/generated
 
+# build output
+/dist
+
 # dependencies
 /node_modules
 /.pnp
