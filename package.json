@@ -12,6 +12,7 @@
   "author": "JakeTrevor <Jacob.Trevor234@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.1",
     "commander": "^11.1.0",
     "kleur": "^4.1.5",
     "langium": "^2.1.3",

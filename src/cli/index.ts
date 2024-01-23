@@ -7,10 +7,12 @@ import { moduleGenerator } from "~/generator/generator";
 import type { Module } from "~/language/generated/ast";
 import { createPseudanimServices } from "~/language/pseudanim-module";
 
-import { extractAstNode, extractDocument } from "./utils";
+import { extractAstNode, extractDocument, toJSON } from "./utils";
 import { validateFile } from "./validateFile";
 import { createServer } from "vite";
 import { fileURLToPath } from "url";
+import { join, resolve } from "path";
+import { writeFile } from "fs/promises";
 
 const program = new Command();
 
@@ -51,15 +53,22 @@ program
   .command("dev")
   .argument("<file>", "source file to run", validateFile)
   .action(async (file) => {
-    const module = await extractAstNode<Module>(file, services);
-    const generator = moduleGenerator(module);
-    const frames = [...generator];
-    console.log(JSON.stringify(frames));
+    const ast = await toJSON(file, services);
+    const dir = fileURLToPath(new URL("../src/app", import.meta.url));
 
-    const dir = fileURLToPath(new URL("./.pseud", import.meta.url));
+    const outFile = join(dir, "./ast.json");
+
+    await writeFile(outFile, ast);
+
+    console.log(dir);
     const server = await createServer({
       configFile: false,
       root: dir,
+      resolve: {
+        alias: {
+          "~": resolve(dir, "../"),
+        },
+      },
       server: {
         port: 3000,
       },

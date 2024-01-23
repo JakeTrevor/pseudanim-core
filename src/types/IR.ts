@@ -2,28 +2,29 @@ export type IR = StateFrame[];
 
 export type StateFrame = MemObject[];
 
-export interface MemObject {
+interface MemObjectBase {
   label?: string;
   key: string;
-  type: "literal" | "pointer" | "array" | "struct";
 }
 
-export interface literal extends MemObject {
+export interface Literal extends MemObjectBase {
   type: "literal";
   value: string | number | boolean;
 }
 
-export interface pointer extends MemObject {
+export interface Pointer extends MemObjectBase {
   type: "pointer";
   value: string;
 }
 
-export interface array extends MemObject {
+export interface Array extends MemObjectBase {
   type: "array";
   value: MemObject[];
 }
 
-export interface struct extends MemObject {
+export interface Struct extends MemObjectBase {
   type: "struct";
   value: Record<string, MemObject>;
 }
+
+type MemObject = Literal | Pointer | Array | Struct;

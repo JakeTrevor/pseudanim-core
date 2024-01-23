@@ -15,7 +15,7 @@ import { type StateFrame } from "~/types/IR";
 import { Context, type ContextPath } from "./context";
 import { expression } from "./evaluator";
 
-type FrameGenerator = Generator<StateFrame, void, void>;
+export type FrameGenerator = Generator<StateFrame, void, void>;
 
 export function* moduleGenerator(m: Module): FrameGenerator {
   const context = new Context();

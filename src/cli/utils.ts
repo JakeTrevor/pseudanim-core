@@ -42,6 +42,12 @@ export async function extractAstNode<T extends AstNode>(
   return (await extractDocument(fileName, services)).parseResult?.value as T;
 }
 
+export async function toJSON(fileName: string, services: LangiumServices) {
+  return services.serializer.JsonSerializer.serialize(
+    (await extractDocument(fileName, services)).parseResult?.value
+  );
+}
+
 interface FilePathData {
   destination: string;
   name: string;
