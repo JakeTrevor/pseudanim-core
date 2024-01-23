@@ -77,7 +77,7 @@ export class Context {
           key: varName,
           value: value,
         };
-      }),
+      })
     );
     return frame;
   };

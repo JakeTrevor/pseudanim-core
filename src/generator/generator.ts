@@ -1,15 +1,15 @@
 import {
-  type Assignment,
-  type For,
-  type If,
-  type Module,
-  type Statement,
-  type While,
+  Assignment,
   isAssignment,
   isExpression,
   isFor,
   isIf,
   isWhile,
+  type For,
+  type If,
+  type Module,
+  type Statement,
+  type While,
 } from "~/language/generated/ast";
 import { type StateFrame } from "~/types/IR";
 import { Context, type ContextPath } from "./context";
@@ -73,7 +73,7 @@ function* WhileGenerator(
 function* BlockGenerator(block: Statement[], context: Context): FrameGenerator {
   for (const statement of block) {
     // one of:
-    // Assignment | Expression | For | If | While
+    // VariableAssignment | Expression | For | If | While
     if (isAssignment(statement)) yield* AssignmentGenerator(statement, context);
     if (isFor(statement)) yield* ForGenerator(statement, context);
     if (isIf(statement)) yield* IfGenerator(statement, context);

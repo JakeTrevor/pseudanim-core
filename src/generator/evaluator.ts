@@ -29,22 +29,19 @@ const simpleExpression = (expr: SimpleExpression, context: Context): Value => {
 };
 
 const reference = (ref: Ref, context: Context): Value => {
-  if (ref.ref.error)
-    throw Error("unresolvable reference: ", { cause: ref.ref.error.message });
-
-  if (!ref.ref.ref) throw Error("unamed reference");
+  if (!ref.ref) throw Error("unamed reference");
 
   const path =
     ref.access?.path.map((e) => {
       if (isExpression(e)) return expression(e, context);
       return e;
     }) ?? [];
-  path.unshift(ref.ref.ref.name);
+  path.unshift(ref.ref);
 
   const v = context.get(path as ContextPath);
 
   // TODO proper runtime error
-  if (v === undefined) throw Error("unresolvable reference: ", { cause: path });
+  if (v === undefined) throw Error(`unresolvable reference: ${path}}`);
 
   return v;
 };
