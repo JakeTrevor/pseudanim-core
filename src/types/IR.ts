@@ -27,4 +27,4 @@ export interface Struct extends MemObjectBase {
   value: Record<string, MemObject>;
 }
 
-type MemObject = Literal | Pointer | Array | Struct;
+export type MemObject = Literal | Pointer | Array | Struct;

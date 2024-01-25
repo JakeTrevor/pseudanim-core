@@ -1,12 +1,12 @@
-import React from "react";
-import { StateFrame } from "../types/IR";
-import { components } from "./mem-objects";
+import { StateFrame } from "~/types/IR";
+import { MemObject } from "./objects/mem-object";
 
 export function Frame({ frame }: { frame: StateFrame }) {
-  return frame.map((e) => {
-    const Comp = components[e.type];
-
-    // @ts-expect-error TS is not quite smart enough for this to work; but trust me, it does
-    return <Comp obj={e} />;
-  });
+  return (
+    <div className="grid  grid-cols-3 place-items-centre p-10 gap-5">
+      {frame.map((e) => (
+        <MemObject object={e} />
+      ))}
+    </div>
+  );
 }

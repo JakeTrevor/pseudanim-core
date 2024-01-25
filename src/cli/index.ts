@@ -9,7 +9,7 @@ import { createPseudanimServices } from "~/language/pseudanim-module";
 
 import { extractAstNode, extractDocument, toJSON } from "./utils";
 import { validateFile } from "./validateFile";
-import { createServer } from "vite";
+import { build, createServer } from "vite";
 import { fileURLToPath } from "url";
 import { join, resolve } from "path";
 import { writeFile } from "fs/promises";
@@ -60,7 +60,6 @@ program
 
     await writeFile(outFile, ast);
 
-    console.log(dir);
     const server = await createServer({
       configFile: false,
       root: dir,
@@ -79,4 +78,28 @@ program
     server.bindCLIShortcuts({ print: true });
   });
 
+program
+  .command("build")
+  .argument("<file>", "source file to run", validateFile)
+  .action(async (file) => {
+    const ast = await toJSON(file, services);
+    const dir = fileURLToPath(new URL("../src/app", import.meta.url));
+
+    const outFile = join(dir, "./ast.json");
+
+    await writeFile(outFile, ast);
+    await build({
+      configFile: false,
+      appType: "spa",
+      root: dir,
+      resolve: {
+        alias: {
+          "~": resolve(dir, "../"),
+        },
+      },
+      json: {
+        stringify: true,
+      },
+    });
+  });
 program.parse();
