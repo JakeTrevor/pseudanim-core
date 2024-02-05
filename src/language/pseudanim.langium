@@ -25,7 +25,12 @@ For:
 ;
 
 Assignment:
-    name=ID (path=Access)? '=' val=(Expression)
+    name=ID (path=Access)? '=' val=(Expression) (directive=Directive)?
+;
+
+// directives/annotations:
+Directive:
+    "//#" name=ID ('('( args+=ID (',' args+=ID )*)? ')')?
 ;
 
 
