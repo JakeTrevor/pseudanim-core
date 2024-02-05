@@ -4,6 +4,7 @@ export type StateFrame = MemObject[];
 
 interface MemObjectBase {
   label?: string;
+  from?: string;
   key: string;
 }
 

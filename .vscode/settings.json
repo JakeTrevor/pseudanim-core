@@ -5,5 +5,9 @@
       "fileMatch": ["package.json", "tsup.config.json"]
     }
   ],
-  "cSpell.words": ["langium", "pseudanim"]
+  "cSpell.words": [
+    "GSAP",
+    "langium",
+    "pseudanim"
+  ]
 }
