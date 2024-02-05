@@ -4,7 +4,9 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "generate": "langium generate",
+    "css:watch": "tailwindcss -i ./src/input.css -o ./src/app/output.css --watch",
+    "css:build": "tailwindcss -i ./src/input.css -o ./src/app/output.css",
+    "lang:generate": "langium generate",
     "postinstall": "langium generate",
     "build": "tsup"
   },
@@ -24,7 +26,7 @@
   "devDependencies": {
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
-    "@types/node": "18",
+    "tailwindcss": "^3.4.1",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
