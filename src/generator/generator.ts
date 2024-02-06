@@ -32,8 +32,26 @@ function* AssignmentGenerator(a: Assignment, context: Context): FrameGenerator {
   path.unshift(a.name);
 
   const value = expression(a.val, context);
-  context.set(path as ContextPath, value);
-  yield context.makeFrame();
+
+  context.set([...path] as ContextPath, value);
+
+  let association = undefined;
+
+  if (a.from) {
+    const fromPath =
+      a.from.path?.path.map((e) => {
+        if (isExpression(e)) return expression(e, context);
+        return e;
+      }) ?? [];
+    fromPath.unshift(a.from.name);
+
+    association = {
+      from: fromPath as ContextPath,
+      to: path as ContextPath,
+    };
+  }
+
+  yield context.makeFrame(association);
 }
 
 function* ForGenerator(f: For, parentContext: Context): FrameGenerator {

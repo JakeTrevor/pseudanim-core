@@ -1,4 +1,4 @@
-import { type StateFrame } from "~/types/IR";
+import { MemObject, type StateFrame } from "~/types/IR";
 
 export type Value = string | number | boolean | string[] | number[] | boolean[];
 export type ContextPath = (string | number)[];
@@ -43,29 +43,40 @@ export class Context {
     }
   };
 
-  makeFrame = (): StateFrame => {
-    let frame: StateFrame;
+  makeFrame = (association?: {
+    from: ContextPath;
+    to: ContextPath;
+  }): StateFrame => {
+    let a = association;
+    const keys = Object.keys(this.scope);
 
-    if (this.parent) {
-      frame = this.parent.makeFrame();
-    } else {
-      frame = [];
+    if (association?.from[0] && keys.includes(association.from[0].toString())) {
+      a = undefined;
     }
 
-    frame = frame.concat(
-      Object.keys(this.scope).map((varName) => {
+    let frame: StateFrame = this.parent?.makeFrame(a) ?? [];
+
+    const fromKey = association?.from.join("-");
+    const toKey = association?.to.join("-");
+
+    const extra: MemObject[] = Object.entries(this.scope).map(
+      ([varName, value]) => {
+        const from = varName === toKey ? fromKey : undefined;
         //currently, we only cover arrays and literals
-        const value = this.scope[varName];
+        // TODO NB this does not handle nested arrays properly
         if (Array.isArray(value)) {
           return {
             label: varName,
             type: "array",
             key: varName,
+            from,
             value: value.map((val, i) => {
+              const from = `${varName}-${i}` === toKey ? fromKey : undefined;
               return {
                 key: `${varName}-${i}`,
                 type: "literal",
                 value: val,
+                from,
               };
             }),
           };
@@ -75,10 +86,13 @@ export class Context {
           label: varName,
           type: "literal",
           key: varName,
-          value: value,
+          value: value as string | number | boolean,
+          from,
         };
-      })
+      }
     );
+
+    frame = frame.concat(extra);
     return frame;
   };
 }

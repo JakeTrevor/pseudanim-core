@@ -18,7 +18,7 @@ export function Animator({ generator }: { generator: FrameGenerator }) {
   };
 
   return (
-    <div className="grid place-items-center p-10">
+    <div className="p-10">
       <button
         disabled={done}
         onClick={nextFrame}

@@ -4,15 +4,15 @@ arr = [21,3,4,1,4,3]
 
 
 for i in [0 to (arr.length)] {
-	key = arr[i]
+	key = arr[i] #from(arr[i])
 
 	j = i - 1
 
 	while j >= 0 and arr[j] > key {
-		arr[j+1] = arr[j]
-		j = j - 1
+		arr[j+1] = arr[j] #from(arr[j])
+		j = j - 1 #from(j)
 	}
-	arr[j+1] = key
+	arr[j+1] = key #from(key)
 }
 
 arr

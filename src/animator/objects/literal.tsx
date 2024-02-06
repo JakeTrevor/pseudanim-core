@@ -1,40 +1,45 @@
-import { useRef } from "react";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 import { Literal } from "~/types/IR";
 
 import { MultiLabel } from "./multi-label";
+import { useRef } from "react";
 
 export function Literal({
   obj: { key, value, label, from },
 }: {
   obj: Literal;
 }) {
-  const container = useRef(null);
+  const ref = useRef<HTMLFieldSetElement>(null);
+  useGSAP(() => {
+    if (!from) return;
+    if (!ref.current) return;
 
-  useGSAP(
-    () => {
-      if (!from) return;
+    const fromRect = getBoundsFromKey(from);
+    const toRect = ref.current.getBoundingClientRect();
 
-      const { left, top, width, height } = getBoundsFromKey(from);
-
-      gsap.from(`.${key}`, { left, top, width, height });
-    },
-    { scope: container }
-  );
+    gsap.from(`#${key}`, {
+      x: fromRect.x - toRect.x,
+      y: fromRect.y - toRect.y,
+      width: fromRect.width - toRect.width,
+      height: fromRect.height - toRect.height,
+      position: "absolute",
+    });
+  }, [from]);
 
   return (
     <fieldset
-      ref={container}
-      id={key}
+      ref={ref}
       key={key}
-      className={`${key} border-2 border-solid border-slate-600 px-4 py-2 w-fit h-fit group:w-full`}
+      className={`border-2 border-solid border-slate-600 px-4 py-2 w-fit h-fit min-h-4 group:w-full`}
     >
       <legend>
         <MultiLabel label={label} />
       </legend>
-      <div>{value.toString()}</div>
+      <div className="absolute" id={key}>
+        {value.toString()}
+      </div>
     </fieldset>
   );
 }
